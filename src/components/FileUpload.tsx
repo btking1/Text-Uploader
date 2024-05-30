@@ -1,22 +1,33 @@
-import { useState} from "react"
+import { useState, type ErrorInfo} from "react"
+import type { ErrorCallback } from "typescript";
 
 export default function FileUpload() {
     const [input, setInputs] =useState("")
-    function sendForm(event ){
+    
+    async function sendForm(event){
         event.preventDefault();
+        const form = new FormData(event.target);
+        const file = form.get("file") as File;
+        
+        try {
+            file.arrayBuffer().then(data => console.log(data) )
+        }
+        catch (e){
+        }
+       
         setInputs("");
-       const form =  document.querySelector("form");
     }
-    function handleChange(event){
+
+    function handleChange(event) {
         const value = event.target.value;
         setInputs(value)
-        console.log(value)
     }
     return (
        
-        <form className="w-full max-w-xl" >
+        <form method="post" className="w-full max-w-xl" onSubmit={sendForm} encType="multipart/form-data">
         <input  className="w-full p-3" type="text" name="text" value={input} onChange={handleChange}/>
-            <button type="submit" onClick={sendForm}>submit</button>
+        <input  className="w-full p-3" type="file" name="file"/>
+            <button type="submit" >submit</button>
         </form>
     )
 };
